@@ -109,7 +109,7 @@ void exampleConcurrency3()
     // are executed in well defined order and the results of previous
     // task are always visible to the next task.
     SerialQueue a;
-    SerialQueue b;
+    ConcurrentQueue b;
 
     for (int i = 0; i < 10; ++i)
     {
@@ -124,9 +124,6 @@ void exampleConcurrency3()
         // This means that one SerialQueue cannot consume more than one
         // worker thread in the ThreadPool at any given time since only
         // one task is allowed to execute at a time.
-
-        // In this example we have two serial queues which means only
-        // two worker threads, at best, can be utilized.
 
         // Concurrent queues consume all available pool workers since
         // concurrent tasks don't have any dependencies, except those which
