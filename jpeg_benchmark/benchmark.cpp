@@ -83,9 +83,11 @@ int main(int argc, const char* argv[])
 
     float time0 = timer.time();
     Bitmap bitmap(argv[1]);
+    //bitmap.save("output-mango.jpg");
 
     float time1 = timer.time();
     Surface s = LoadJPEG(argv[1]);
+    //s.save("output-libjpeg.jpg");
     delete[] s.image;
 
     float time2 = timer.time();
@@ -93,10 +95,4 @@ int main(int argc, const char* argv[])
     printf("mango:   %f ms\n", (time1 - time0) * 1000);
     printf("libjpeg: %f ms\n", (time2 - time1) * 1000);
     printf("processing time: %f %%\n", (time1-time0)/(time2-time1) * 100);
-
-#if 0
-    // validate output
-    bitmap.save("output-mango.jpg");
-    s.save("output-libjpeg.jpg");
-#endif
 }
