@@ -161,3 +161,18 @@ void example4()
         });
     }
 }
+
+void example5()
+{
+    // Queues can be named and given a priority (LOW, NORMAL, HIGH)
+
+    // The granularity of priorities is not very fine-grained accidentally,
+    // the idea is that there is some amount of control but no incentive
+    // to go full-retard when scheduling the tasks.
+
+    // The queue names can be useful when debugging and instrumenting
+    // the ThreadPool to get more detailed information what is going on.
+    ConcurrentQueue queue("important queue", Priority::HIGH);
+
+    // Dispatch tasks here.
+}
