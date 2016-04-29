@@ -6,7 +6,7 @@
 
 using namespace mango;
 
-void exampleConcurrency1()
+void example1()
 {
     // MANGO(tm) ThreadPool implementation never puts work to the pool
     // directly. The work is enqueued using work queues, which keep
@@ -30,7 +30,7 @@ void exampleConcurrency1()
 }
 
 
-void exampleConcurrency2()
+void example2()
 {
     ConcurrentQueue q;
 
@@ -94,15 +94,9 @@ void exampleConcurrency2()
     // result collector to sleep until notified that the results are
     // available. Both work; which one is better choise depends on many
     // factors which are outside the scope of this small code example.
-
-    // Some Rules of Thumb:
-    // - Don't block "main" threads in critical path
-    // - If you have to block, do it in isolated thread, this is O.K.
-    // - Know what you are doing (above only applies most of the time)
-    // - Better Rules of Thumb to communicate the intent better :)
 }
 
-void exampleConcurrency3()
+void example3()
 {
     // SerialQueue has a special property: each task has automatic
     // dependency to previously issued task. This means that the tasks
@@ -131,6 +125,39 @@ void exampleConcurrency3()
 
         b.enqueue([] {
             computeOtherStuff(i);
+        });
+    }
+}
+
+void example4()
+{
+    ConcurrentQueue q;
+    std::atomic<int> counter { 0 };
+
+    for (int i = 0; i < 10; ++i)
+    {
+        ConcurrentQueue x;
+
+        q.enqueue([&] {
+            // enqueueuing tasks from tasks works fine and can improve
+            // throughput in some situations where single thread cannot keep
+            // all of the pool's worker threads busy. This situation is more common
+            // when there are a lot of available workers (for example, a Xeon
+            // processor with more than 6 cores) and tasks are cheap.
+
+            // The ThreadPool is currently able to process 10,000,000 tasks
+            // per second on Intel Core i7 3770K CPU. The design uses atomic
+            // memory operations to implement lock-free inter-thread communication.
+            // A similar design using mutex/locking can do roughly 200,000 tasks
+            // per second on a similar hardware. The bottleneck is how to feed
+            // the ThreadPool enough work if the tasks are really trivial. A good
+            // rule-of-thumb to keep the system responsive is to keep the tasks
+            // short enough but not too short (for example, incrementing a counter
+            // would obviously be a bit too trivial thing to do in a ThreadPool).
+
+            x.enqueue([&] {
+                ++counter; // Oops..
+            });
         });
     }
 }

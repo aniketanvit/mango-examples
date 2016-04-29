@@ -10,7 +10,7 @@ using namespace mango;
 /*
     First let's do trivial image loading using traditional "Bitmap" object technique:
 */
-void exampleLoadImage1(const std::string& filename)
+void example1(const std::string& filename)
 {
     Bitmap bitmap(filename);
 }
@@ -21,7 +21,7 @@ void exampleLoadImage1(const std::string& filename)
     fileformat the bits are in and that is figured out by looking at the
     extension of the filename and contents of the memory.
 */
-void exampleLoadImage2(const Memory& memory, const std::string& filename)
+void example2(const Memory& memory, const std::string& filename)
 {
     Bitmap bitmap(memory, filename);
 }
@@ -35,7 +35,7 @@ void exampleLoadImage2(const Memory& memory, const std::string& filename)
     does the processing using a Memory block so these all examples are in fact
     convenience methods for the same mechanism doing the work under the hood.
 */
-void exampleLoadImage3(const uint8* data, size_t size)
+void example3(const uint8* data, size_t size)
 {
     Memory memory(data, size);
     Bitmap bitmap(memory, "jpg"); // we know it's a jpeg file
@@ -49,7 +49,7 @@ void exampleLoadImage3(const uint8* data, size_t size)
     real-world use cases. Integration with OpenGL, DirectX, Vulkan and other
     rendering systems "just works" and can be implemented efficiently.
 */
-void exampleLoadImage4(const Memory& memory, const std::string& extension)
+void example4(const Memory& memory, const std::string& extension)
 {
     // First we need to create a "decoder" object which sees the block of memory
     ImageDecoder decoder(memory, extension);
@@ -132,7 +132,7 @@ void exampleLoadImage4(const Memory& memory, const std::string& extension)
         // consumes some address space. If there is high memory pressure the OS
         // can page out the data as the physical memory is needed somewhere else.
 
-        // Long story short, decode the image.
+        // TL;DR - decode the image
         decoder.decode(surface, 0, 0, 0);
 
         // We didn't really need the image anyway, sorry; discard it. :)
