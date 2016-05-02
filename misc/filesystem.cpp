@@ -97,20 +97,19 @@ void example5(const std::string& pathname)
     }
 }
 
-void example6(const Path& path)
+void example6(const Path& parent)
 {
     // The previous example works just fine there is no question about that.
     // But why should we keep repeating the same work when we can simply
     // use the parent path as root? Let's theck how it's done!
 
-    Path path(pathname);
-    for (auto i : path)
+    for (auto i : parent)
     {
         if (i.isDirectory())
         {
             // recurse into subdirectories
-            Path sub(path, i.name);
-            example5(sub);
+            Path path(parent, i.name);
+            example5(path);
         }
     }
 
