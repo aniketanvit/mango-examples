@@ -176,3 +176,100 @@ void example5()
 
     // Dispatch tasks here.
 }
+
+/*
+    Demonstrate a way to keep reference to shared state which is processed in the
+    ThreadPool. The State object is used in the captured lambdas which are executed
+    in the pool.
+*/
+struct State
+{
+    std::vector<float> data;
+
+    State(size_t size)
+    : data(size)
+    {
+        // initialize the data...
+    }
+
+    void process(size_t offset, size_t count)
+    {
+        assert(offset + count < data.size());
+        // process a range in the data here...
+    }
+};
+
+void example6()
+{
+    // Create the shared State in the heap and refer to it using std::shared_ptr
+    std::shared_ptr<State> state = std::make_shared<State>(1024);
+
+    ConcurrentQueue q;
+
+    for (size_t i = 0; i < 1024; i += 64)
+    {
+        // NOTE! State is captued by value so that the reference counting
+        // is used to keep track of state life-time. In other words, the last
+        // worker thread to complete will "turn off the lights". This way work can be
+        // queued in the pool w/o having to synchronize before exiting this scope.
+        q.enqueue([state, i] {
+            state.process(i, 64);
+        });
+    }
+
+    // q.wait(); <-- won't be required as the std::shared_ptr will keep track of last
+    //               shared_ptr to hold reference to the state.
+
+    // ALWAYS KEEP THE LIFE-TIME OF QUEUED OBJECTS IN MIND!!!
+
+    // This techniques allows us to leave the book-keeping to the reference counting
+    // in the std::shared_ptr. The downside is, once again, that the object lives in
+    // the heap and is dynamically allocated.
+
+    // One nice trick to mention: the State destructor could be used to enqueue
+    // more work in the pool. This allows doing processing on the results of the
+    // computation w/o requiring a barrier synchronization primitive.
+    // In short: have implicit synchronization based on how you feed the work!
+}
+
+void example7()
+{
+    // Can this code deadlock?
+    ConcurrentQueue q;
+    for (int i = 0; i < 200; ++i)
+    {
+        q.enqueue([] {
+            ConcurrentQueue x;
+            for (int j = 0; j < 40; ++j)
+            {
+                x.enqueue([] {
+                    computeSomething();
+                });
+            }
+            x.wait();
+        });
+    }
+    q.wait();
+
+    // At first glance, it seems possible that x.wait() could be running simultaneously
+    // as many times as we have available threads in the pool. This would be a problem
+    // if all of the workers were sleeping and tasks couldn't get through. We would
+    // be deadlocked and our program would hang.
+
+    // It is very easy to paint yourself into the corner like this and generally NEVER
+    // sleep or wait for a signal from other tasks in a thread pool.
+
+    // However, our queue wait is implemented as a cooperative-wait so it will help
+    // executing tasks in a pool. The unfortunate downside is that this increases latency
+    // slightly since the wait might still be currently processing a task not related
+    // to the current queue's wait status. The upside is that the pool cannot be
+    // deadlocked with wait. Even if task being processed in a wait has a wait in it,
+    // that wait will be cooperative as well and we degenerate into recursion but this
+    // should be extremely rare, in practise non-existent if the idea to never wait in a
+    // task is followed.
+
+    // The takeaway is that if you really, absolutely have to synchronize in a enqueued
+    // task then use the queue wait. It's better to have implicit synchronization by
+    // NOT issuing any tasks before the data is available (eg. trigger a task when the
+    // data is known to be available). Just friendly advice, feel free to ignore and cry.
+}
