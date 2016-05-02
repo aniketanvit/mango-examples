@@ -38,8 +38,8 @@ void example2()
 
     // Since it is a stream, we can plug endianess adapter into it
     // (see endian.cpp for more information)
-    LittleEndianStream ls = file;
-    uint32 value = file.read32();
+    LittleEndianStream leStream = file; // le stream is French for "stream"
+    uint32 value = leStream.read32();
 
     // On the other hand, it is also a block of memory.. so endianess
     // aware pointer will also be a possible use case:
@@ -160,7 +160,6 @@ void example7()
     are then processed. This is the way most libraries used to work with the
     difference that such behaviour was built-in and mandated by the library design.
     In our solution this is a choise the developer can make himself based on
-    how the asset loading processing pipeline is built. We provide the
-    low-level components which can be used as building blocks for higher level
-    constructs.
+    how the asset loading processing pipeline is built. We provide the low-level
+    components which can be used as building blocks for higher level constructs.
 */
