@@ -92,7 +92,7 @@ void example5(const std::string& pathname)
         if (i.isDirectory())
         {
             // recurse into subdirectories
-            example5(pathname + i.name());
+            example5(pathname + i.name);
         }
     }
 }
