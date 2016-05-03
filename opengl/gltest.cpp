@@ -10,6 +10,11 @@ using namespace mango;
 class TestWindow : public opengl::Context
 {
 public:
+    TestWindow()
+    : Context(600, 400)
+    {
+    }
+
     void onKeyPress(Keycode code, uint32 mask) override
     {
         switch (code)
@@ -41,6 +46,5 @@ public:
 int main(int argc, const char* argv[])
 {
     TestWindow window;
-    window.createContext(600, 400);
     window.enterEventLoop();
 }
