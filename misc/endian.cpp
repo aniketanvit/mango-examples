@@ -59,7 +59,7 @@ void example4(Stream& stream)
     uint32 x = p.read32();
 
     Would see that we are reading from, say, Little Endian pointer and
-    that we are compiling for little endian architectute, thus no
+    that we are compiling for little endian architecture, thus no
     translation will be required. The data will be fetched using
     unaligned memory read operation. The load operation is selected using
     compile time information about the architecture and how it handles
