@@ -26,8 +26,8 @@ void example1()
     simd4f b = simd4f_set4(0.0f, 1.0f, 0.5f, 0.5f);
     simd4f c = simd4f_add(a, b);
     simd4f d = simd4f_mul(c, b);
-    simd4f mask = simd4f_gt(a, b); // greater-than compare
-    simd4f e = simd4f_select(c, d, mask);
+    simd4f mask = simd4f_compare_gt(a, b);
+    simd4f e = simd4f_select(mask, d, c);
 }
 
 // previous example using higher-level "short vector math" abstraction:
