@@ -101,7 +101,7 @@ void example6(const Path& parent)
 {
     // The previous example works just fine there is no question about that.
     // But why should we keep repeating the same work when we can simply
-    // use the parent path as root? Let's theck how it's done!
+    // use the parent path as root? Let's check how it's done!
 
     for (auto i : parent)
     {
