@@ -50,6 +50,27 @@ void example4(Stream& stream)
     delete[] buffer;
 }
 
+// Wait! There's more! If you clone MANGO from github.com now you will get endianess-aware types for FREE!
+// NO ADDITIONAL CHARGE!
+
+struct SomeHeader
+{
+    uint16be a;
+    uint16be b;
+    uint32be c;
+};
+
+void example5(const uint8* p)
+{
+    // reinterpret raw storage as SomeHeader
+    const SomeHeader& header = *reinterpret_cast<const SomeHeader *>(p);
+
+    // convert-on-read endianess conversion
+    int a = header.a;
+    int b = header.b;
+    int c = header.c;
+}
+
 /*
     All of the streaming interfaces are super light-weight and
     every decision is done at compile time; the correct code is called
