@@ -1,7 +1,8 @@
 /*
     MANGO Multimedia Development Platform
-    Copyright (C) 2012-2016 Twilight Finland 3D Oy Ltd. All rights reserved.
+    Copyright (C) 2012-2017 Twilight Finland 3D Oy Ltd. All rights reserved.
 */
+#include <vector>
 #include <mango/image/image.hpp>
 
 using namespace mango;
@@ -71,12 +72,12 @@ void example4(const Memory& memory, const std::string& extension)
 
         // Since this is a simple example we just allocate a buffer.
         const int stride = header.width * header.format.bytes();
-        uint8* buffer = new uint8[header.height * stride];
+        std::vector<uint8> buffer(header.height * stride);
 
         // This is just "Image Pointer" ; mango::Surface is just surface
         // description so that the decoder / blitter knows how to interpret the
         // memory it sees (the buffer).
-        Surface surface(header.width, header.height, header.format, stride, buffer);
+        Surface surface(header.width, header.height, header.format, stride, buffer.data());
 
         // Decode the image. The first parameter is the target surface which
         // describes the decoding target memory. The decoder does clip against
@@ -134,9 +135,6 @@ void example4(const Memory& memory, const std::string& extension)
 
         // TL;DR - decode the image
         decoder.decode(surface, 0, 0, 0);
-
-        // We didn't really need the image anyway, sorry; discard it. :)
-        delete[] buffer;
     }
 }
 
