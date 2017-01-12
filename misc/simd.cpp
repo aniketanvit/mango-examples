@@ -22,12 +22,12 @@ using namespace mango;
 */
 void example1()
 {
-    simd4f a = simd4f_set4(1.0f, 2.0f, 2.0f, 1.0f);
-    simd4f b = simd4f_set4(0.0f, 1.0f, 0.5f, 0.5f);
-    simd4f c = simd4f_add(a, b);
-    simd4f d = simd4f_mul(c, b);
-    simd4f mask = simd4f_compare_gt(a, b);
-    simd4f e = simd4f_select(mask, d, c);
+    simd::float32x4 a = simd::float32x4_set4(1.0f, 2.0f, 2.0f, 1.0f);
+    simd::float32x4 b = simd::float32x4_set4(0.0f, 1.0f, 0.5f, 0.5f);
+    simd::float32x4 c = simd::float32x4_add(a, b);
+    simd::float32x4 d = simd::float32x4_mul(c, b);
+    simd::float32x4 mask = simd::float32x4_compare_gt(a, b);
+    simd::float32x4 e = simd::float32x4_select(mask, d, c);
 }
 
 // previous example using higher-level "short vector math" abstraction:
