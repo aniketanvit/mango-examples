@@ -42,6 +42,23 @@ void example3(const uint8* data, size_t size)
     Bitmap bitmap(memory, "jpg"); // we know it's a jpeg file
 }
 
+/*
+    Different strategies for dealing with pixel formats
+*/
+void example4()
+{
+    // Convenience constructor allows the user to define what format he wants the
+    // image to be stored in. This is not optimal arrangement as usually artist would
+    // choose the format in the image file itself to his liking.
+    // We MUST have BGRA5551 and NOTHING else will satisfy us!
+    Bitmap bitmap("test.tga", Format(16, Format::UNORM, Format::BGRA, 5, 5, 5, 1));
+
+    // Another nice feature we have is that one can blit between bitmaps and surfaces.
+    // The library will do pixel format conversion using the fastest available converter.
+    Bitmap bitmap2(1920, 1080, Format(32, Format::UNORM, Format::RGBA, 8, 8, 8, 8));
+    bitmap2.blit(0, 0, bitmap);
+}
+
 
 /*
     Let's see how deep the rabbit hole goes! The image encoding / decoding
@@ -50,7 +67,7 @@ void example3(const uint8* data, size_t size)
     real-world use cases. Integration with OpenGL, DirectX, Vulkan and other
     rendering systems "just works" and can be implemented efficiently.
 */
-void example4(const Memory& memory, const std::string& extension)
+void example5(const Memory& memory, const std::string& extension)
 {
     // First we need to create a "decoder" object which sees the block of memory
     ImageDecoder decoder(memory, extension);
