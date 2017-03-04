@@ -1,6 +1,6 @@
 /*
     MANGO Multimedia Development Platform
-    Copyright (C) 2012-2016 Twilight Finland 3D Oy Ltd. All rights reserved.
+    Copyright (C) 2012-2017 Twilight Finland 3D Oy Ltd. All rights reserved.
 */
 #include <mango/simd/simd.hpp>
 
@@ -15,7 +15,7 @@ using namespace mango;
     code to be more user-friendly. This abstracts all of the platform specific
     minute details into it's own neat compartment for easier maintenance. This also
     allows to add more platforms easier; we already have quite a few targets:
-    - Intel (sse, sse2, sse3, sse 4.x, avx, avx2)
+    - Intel (SSE, SSE2, SSE3, SSE 4.1, AVX, AVX2)
     - ARM neon
     - PPC Altivec / SPU
 
@@ -24,13 +24,13 @@ void example1()
 {
     simd::float32x4 a = simd::float32x4_set4(1.0f, 2.0f, 2.0f, 1.0f);
     simd::float32x4 b = simd::float32x4_set4(0.0f, 1.0f, 0.5f, 0.5f);
-    simd::float32x4 c = simd::float32x4_add(a, b);
-    simd::float32x4 d = simd::float32x4_mul(c, b);
-    simd::float32x4 mask = simd::float32x4_compare_gt(a, b);
-    simd::float32x4 e = simd::float32x4_select(mask, d, c);
+    simd::float32x4 c = simd::add(a, b);
+    simd::float32x4 d = simd::mul(c, b);
+    simd::float32x4 mask = simd::compare_gt(a, b);
+    simd::float32x4 e = simd::select(mask, d, c);
 }
 
-// previous example using higher-level "short vector math" abstraction:
+// previous example using higher-level "Short Vector Math" abstraction:
 void example2()
 {
     float4 a(1.0f, 2.0f, 2.0f, 1.0f);
@@ -38,4 +38,10 @@ void example2()
     float4 c = a + b;
     float4 d = c * b;
     float4 e = select(a > b, d, c);
+}
+
+simd::float32x4 example3(simd::float32x4 v)
+{
+    // SIMD optimized trigonometric functions (courtesy of Sleef)
+    return simd::sin(v);
 }
