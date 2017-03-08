@@ -19,13 +19,13 @@ void example1(const uint8* p)
 void example2(const uint8* address)
 {
     // same as example1 but using "endian aware pointers"
-    LittleEndianConstPointer p = address;
+    LittleEndianPointer p = address;
     uint16 a = p.read16();
     uint16 b = p.read16();
     uint32 c = p.read32();
 }
 
-void example3(LittleEndianConstPointer& p)
+void example3(LittleEndianPointer& p)
 {
     float f = p.read32f();
     p += 20; // skip 20 bytes

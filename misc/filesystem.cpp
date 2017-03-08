@@ -28,13 +28,14 @@ void example2()
     File file("test.jpg");
 
     // This is redundant but let's read the file into a buffer
-    uitn64 size = file.size();
+    uint64 size = file.size();
     char* buffer = new char[size];
-    std::memcpy(buffer, file.data(), size);
+    std::vector<char> buffer(size);
+    std::memcpy(buffer.data(), file.data(), size);
 
     // Or, we could treat the file as a stream -
-    // This will internally be a memcpy but with a Stream interface!
-    file.read(buffer, size);
+    // This will internally be a memcpy but with the Stream interface!
+    file.read(buffer.data(), size);
 
     // Since it is a stream, we can plug endianess adapter into it
     // (see endian.cpp for more information)
@@ -43,7 +44,7 @@ void example2()
 
     // On the other hand, it is also a block of memory.. so endianess
     // aware pointer will also be a possible use case:
-    LittleEndianConstPointer p = file;
+    LittleEndianPointer p = file;
     uint32 value2 = p.read32();
     p += 8; // skip 8 bytes
     float value3 = p.read32f();

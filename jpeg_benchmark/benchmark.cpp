@@ -81,16 +81,16 @@ int main(int argc, const char* argv[])
 
     Timer timer;
 
-    float time0 = timer.time();
+    double time0 = timer.time();
     Bitmap bitmap(argv[1]);
     //bitmap.save("output-mango.jpg");
 
-    float time1 = timer.time();
+    double time1 = timer.time();
     Surface s = LoadJPEG(argv[1]);
     //s.save("output-libjpeg.jpg");
     delete[] s.image;
 
-    float time2 = timer.time();
+    double time2 = timer.time();
 
     printf("mango:   %f ms\n", (time1 - time0) * 1000);
     printf("libjpeg: %f ms\n", (time2 - time1) * 1000);
