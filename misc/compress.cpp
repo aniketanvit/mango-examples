@@ -9,21 +9,19 @@ using namespace mango;
 void example1(const uint8* data, size_t size)
 {
     // compute (maximum) compressed buffer size
-    size_t compressedSize = lz4::bound(size);
+    size_t compressed_size = lz4::bound(size);
 
     // allocate compressed buffer
-    Buffer buffer(compressedSize);
+    Buffer buffer(compressed_size);
 
     // compress with maximum compression rate (10)
-    Memory compressed = lz4::compress(buffer, Memory(data, size), 10);
+    size_t compressed = lz4::compress(buffer, Memory(data, size), 10);
 
     // print results :)
-    printf("compressed %d bytes to %d bytes.\n",
-        int(size),
-        int(compressed.size));
+    printf("compressed %zu bytes to %zu bytes.\n", size, compressed);
 }
 
-void example2(const Memory& compressed, size_t size)
+void example2(Memory compressed, size_t size)
 {
     // allocate buffer for decompressed data
     Buffer buffer(size);
@@ -37,7 +35,5 @@ void example2(const Memory& compressed, size_t size)
     allocate memory for the result. The Memory object only describes
     the input and output memory blocks. Notice how the example1 does
     first compure the bound() so that the correct amount of memory can
-    be allocated. Likewise, the returned Memory object tells how many
-    bytes the compressed data consume. All memory management is left
-    to the caller.
+    be allocated. All memory management is left to the caller.
 */
