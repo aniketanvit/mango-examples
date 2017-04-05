@@ -188,7 +188,7 @@ namespace method3
 // ----------------------------------------------------------------------
 
 /*
-    method4 implemented as vector packets
+    method3 implemented as float4 packets
 */
 
 namespace method4
