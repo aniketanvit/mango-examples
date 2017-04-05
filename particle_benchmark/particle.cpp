@@ -184,20 +184,77 @@ namespace method3
 } // namespace
 
 // ----------------------------------------------------------------------
+// method4: SoA with PackedVector3
+// ----------------------------------------------------------------------
+
+/*
+    method4 implemented as vector packets
+*/
+
+namespace method4
+{
+
+    struct PackedVector3
+    {
+        float4 x;
+        float4 y;
+        float4 z;
+    };
+
+    struct Scene
+    {
+        std::vector<PackedVector3, AlignedAllocator<PackedVector3>> positions;
+        std::vector<PackedVector3, AlignedAllocator<PackedVector3>> velocities;
+        std::vector<uint32> colors;
+        std::vector<float> radiuses;
+        std::vector<float> rotations;
+
+        Scene(int count)
+            : positions(count/4)
+            , velocities(count/4)
+            , colors(count/4)
+            , radiuses(count/4)
+            , rotations(count/4)
+        {
+            count /= 4;
+            for (int i = 0; i < count; ++i)
+            {
+                positions[i].x = random_float4(1.0f);
+                positions[i].y = random_float4(1.0f);
+                positions[i].z = random_float4(1.0f);
+                velocities[i].x = random_float4(1.0f);
+                velocities[i].y = random_float4(1.0f);
+                velocities[i].z = random_float4(1.0f);
+            }
+        }
+
+        void transform()
+        {
+            const int count = positions.size();
+            for (int i = 0; i < count; ++i)
+            {
+                positions[i].x += velocities[i].x;
+                positions[i].y += velocities[i].y;
+                positions[i].z += velocities[i].z;
+            }
+        }
+    };
+
+} // namespace
+
+// ----------------------------------------------------------------------
 // main()
 // ----------------------------------------------------------------------
 
 /*
     Timings on i7 3770K processor using AVX instructions for 1,000,000 particles and 60 frames:
 
-    method1: 285 ms (210 fps)
-    method2: 170 ms (353 fps)
-    method3: 130 ms (462 fps)
+    method1: 263 ms (228 fps)
+    method2: 151 ms (397 fps)
+    method3: 121 ms (495 fps)
+    method4: 110 ms (545 fps)
 
-    Conclusion: the effects of memory layout can double the performance. Programming using
-    SIMD-friendly SoA is not very untuitive and so much fuss that it should only be done
-    when the application has a performance bottleneck. This is a nice trick to have up in the
-    sleeve for the times when we need the little extra performance to go to 11.
+    Conclusion: the effects of memory layout can double the performance.
 */
 
 int main(int argc, const char* argv[])
@@ -207,10 +264,12 @@ int main(int argc, const char* argv[])
     method1::Scene scene1(count);
     method2::Scene scene2(count);
     method3::Scene scene3(count);
+    method4::Scene scene4(count);
 
     uint64 time1 = 0;
     uint64 time2 = 0;
     uint64 time3 = 0;
+    uint64 time4 = 0;
 
     Timer timer;
 
@@ -226,13 +285,18 @@ int main(int argc, const char* argv[])
         scene3.transform();
 
         uint64 s3 = timer.ms();
+        scene4.transform();
+
+        uint64 s4 = timer.ms();
 
         time1 += (s1 - s0);
         time2 += (s2 - s1);
         time3 += (s3 - s2);
+        time4 += (s4 - s3);
     }
 
     printf("time: %d ms\n", int(time1));
     printf("time: %d ms\n", int(time2));
     printf("time: %d ms\n", int(time3));
+    printf("time: %d ms\n", int(time4));
 }
