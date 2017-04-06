@@ -153,9 +153,9 @@ namespace method3
             , xvelocities(count/4)
             , yvelocities(count/4)
             , zvelocities(count/4)
-            , colors(count/4)
-            , radiuses(count/4)
-            , rotations(count/4)
+            , colors(count)
+            , radiuses(count)
+            , rotations(count)
         {
             count /= 4;
             for (int i = 0; i < count; ++i)
@@ -212,9 +212,9 @@ namespace method4
         Scene(int count)
             : positions(count/4)
             , velocities(count/4)
-            , colors(count/4)
-            , radiuses(count/4)
-            , rotations(count/4)
+            , colors(count)
+            , radiuses(count)
+            , rotations(count)
         {
             count /= 4;
             for (int i = 0; i < count; ++i)
