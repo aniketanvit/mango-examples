@@ -3,6 +3,7 @@
     Copyright (C) 2012-2017 Twilight Finland 3D Oy Ltd. All rights reserved.
 */
 #include <mango/mango.hpp>
+#include <algorithm>
 
 using namespace mango;
 
@@ -12,16 +13,15 @@ using namespace mango;
 
 namespace {
 
-    static inline float random_float()
-    {
-        return (float(mango::random() % 65536) / 65536.0f - 0.5f) * 2.0f;
-    }
+    std::random_device rd;
+    std::mt19937 mt(rd());
+    std::uniform_real_distribution<float> dist(-1.0, 1.0);
 
     static inline float4 random_float4(float w)
     {
-        float x = random_float();
-        float y = random_float();
-        float z = random_float();
+        float x = dist(mt);
+        float y = dist(mt);
+        float z = dist(mt);
         return float4(x, y, z, w);
     }
 
