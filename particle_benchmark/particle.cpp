@@ -4,8 +4,12 @@
 */
 #include <mango/mango.hpp>
 #include <algorithm>
+#include <random>
 
 using namespace mango;
+
+template <typename T>
+using AlignedVector = std::vector<T, AlignedAllocator<T>>;
 
 // ----------------------------------------------------------------------
 // helpers
@@ -17,7 +21,7 @@ namespace {
     std::mt19937 mt(rd());
     std::uniform_real_distribution<float> dist(-1.0, 1.0);
 
-    static inline float4 random_float4(float w)
+    inline float4 random_float4(float w)
     {
         float x = dist(mt);
         float y = dist(mt);
@@ -50,7 +54,7 @@ namespace method1
 
     struct Scene
     {
-        std::vector<Particle, AlignedAllocator<Particle>> particles;
+        AlignedVector<Particle> particles;
 
         Scene(int count)
             : particles(count)
@@ -86,8 +90,8 @@ namespace method2
 
     struct Scene
     {
-        std::vector<float4, AlignedAllocator<float4>> positions;
-        std::vector<float4, AlignedAllocator<float4>> velocities;
+        AlignedVector<float4> positions;
+        AlignedVector<float4> velocities;
         std::vector<uint32> colors;
         std::vector<float> radiuses;
         std::vector<float> rotations;
@@ -136,12 +140,12 @@ namespace method3
 
     struct Scene
     {
-        std::vector<float4, AlignedAllocator<float4>> xpositions;
-        std::vector<float4, AlignedAllocator<float4>> ypositions;
-        std::vector<float4, AlignedAllocator<float4>> zpositions;
-        std::vector<float4, AlignedAllocator<float4>> xvelocities;
-        std::vector<float4, AlignedAllocator<float4>> yvelocities;
-        std::vector<float4, AlignedAllocator<float4>> zvelocities;
+        AlignedVector<float4> xpositions;
+        AlignedVector<float4> ypositions;
+        AlignedVector<float4> zpositions;
+        AlignedVector<float4> xvelocities;
+        AlignedVector<float4> yvelocities;
+        AlignedVector<float4> zvelocities;
         std::vector<uint32> colors;
         std::vector<float> radiuses;
         std::vector<float> rotations;
@@ -203,8 +207,8 @@ namespace method4
 
     struct Scene
     {
-        std::vector<PackedVector3, AlignedAllocator<PackedVector3>> positions;
-        std::vector<PackedVector3, AlignedAllocator<PackedVector3>> velocities;
+        AlignedVector<PackedVector3> positions;
+        AlignedVector<PackedVector3> velocities;
         std::vector<uint32> colors;
         std::vector<float> radiuses;
         std::vector<float> rotations;
@@ -273,7 +277,8 @@ int main(int argc, const char* argv[])
 
     Timer timer;
 
-    for (int i = 0; i < 60; ++i)
+    const int frames = 60;
+    for (int i = 0; i < frames; ++i)
     {
         uint64 s0 = timer.ms();
         scene1.transform();
@@ -295,8 +300,9 @@ int main(int argc, const char* argv[])
         time4 += (s4 - s3);
     }
 
-    printf("time: %d ms\n", int(time1));
-    printf("time: %d ms\n", int(time2));
-    printf("time: %d ms\n", int(time3));
-    printf("time: %d ms\n", int(time4));
+    printf("Rendered %d frames in...\n", frames);
+    printf("time: %d ms (%d fps)\n", int(time1), int(frames * 1000 / time1));
+    printf("time: %d ms (%d fps)\n", int(time2), int(frames * 1000 / time2));
+    printf("time: %d ms (%d fps)\n", int(time3), int(frames * 1000 / time3));
+    printf("time: %d ms (%d fps)\n", int(time4), int(frames * 1000 / time4));
 }
