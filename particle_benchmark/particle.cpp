@@ -241,6 +241,25 @@ namespace method4
                 positions[i].y += velocities[i].y;
                 positions[i].z += velocities[i].z;
             }
+
+            /* generated code with g++ 7.1
+
+            .L631:
+            movaps  (%rax), %xmm0
+            addq    $48, %rax
+            addq    $48, %rcx
+            addps   -48(%rcx), %xmm0
+            movaps  %xmm0, -48(%rax)
+            movaps  -32(%rax), %xmm0
+            addps   -32(%rcx), %xmm0
+            movaps  %xmm0, -32(%rax)
+            movaps  -16(%rax), %xmm0
+            addps   -16(%rcx), %xmm0
+            movaps  %xmm0, -16(%rax)
+            cmpq    %rax, %rsi
+            jne     .L631
+
+            */
         }
     };
 
