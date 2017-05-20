@@ -33,12 +33,11 @@ void example2()
     // Allocate 16 KB of memory
     SharedMemory shared(1024 * 16);
 
-
     // A bit different use case.. take ownership of memory allocated by someone else:
     uint8 *buffer = new uint8[40000];
     SharedMemory shared2(buffer, 40000);
 
-    // The buffer is now owned by shared2 and releasing the memory wuold be a programming error:
+    // The buffer is now owned by shared2 and releasing the memory would be a programming error:
     delete [] buffer; // ERROR! 
 }
 
