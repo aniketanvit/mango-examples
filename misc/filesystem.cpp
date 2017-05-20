@@ -29,7 +29,6 @@ void example2()
 
     // This is redundant but let's read the file into a buffer
     uint64 size = file.size();
-    char* buffer = new char[size];
     std::vector<char> buffer(size);
     std::memcpy(buffer.data(), file.data(), size);
 
