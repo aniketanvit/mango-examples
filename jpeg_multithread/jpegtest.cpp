@@ -16,22 +16,22 @@ void test_jpeg(const std::string& folder)
     //SerialQueue q("jpeg reader testloop");
 
     Path path(folder);
-    const int count = int(path.size());
+    const size_t count = path.size();
 
     std::atomic<size_t> image_bytes { 0 };
 
-    for (int i = 0; i < count; ++i)
+    for (size_t i = 0; i < count; ++i)
     {
         const auto& node = path[i];
         if (!node.isDirectory())
         {
             std::string filename = node.name;
             q.enqueue([&path, filename, i, count, &image_bytes] {
-                printf("filename: %s (%d / %d) begin.\n", filename.c_str(), i + 1, count);
+                printf("filename: %s (%zu / %zu) begin.\n", filename.c_str(), i + 1, count);
                 File file(path, filename);
                 Bitmap bitmap(file, filename);
                 image_bytes += bitmap.width * bitmap.height * 4;
-                printf("filename: %s (%d / %d) done.\n", filename.c_str(), i + 1, count);
+                printf("filename: %s (%zu / %zu) done.\n", filename.c_str(), i + 1, count);
             });
         }
     }
