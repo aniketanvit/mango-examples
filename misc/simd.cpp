@@ -26,7 +26,7 @@ void example1()
     simd::float32x4 b = simd::float32x4_set4(0.0f, 1.0f, 0.5f, 0.5f);
     simd::float32x4 c = simd::add(a, b);
     simd::float32x4 d = simd::mul(c, b);
-    simd::float32x4 mask = simd::compare_gt(a, b);
+    simd::mask32x4 mask = simd::compare_gt(a, b);
     simd::float32x4 e = simd::select(mask, d, c);
 }
 
