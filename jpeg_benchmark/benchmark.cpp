@@ -13,8 +13,9 @@ using namespace mango;
 void warmup(const char* filename)
 {
     File file(filename);
-    std::vector<char> buffer(file.size());
-    std::memcpy(buffer.data(), file.data(), file.size());
+    Memory memory = file;
+    std::vector<char> buffer(memory.size);
+    std::memcpy(buffer.data(), memory.address, memory.size);
 }
 
 // ----------------------------------------------------------------------
