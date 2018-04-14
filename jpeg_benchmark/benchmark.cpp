@@ -40,7 +40,7 @@ Surface load_jpeg(const char* filename)
     jpeg_create_decompress( &info ); //fills info structure
 
     jpeg_stdio_src( &info, file );
-    jpeg_read_header( &info, true );
+    jpeg_read_header( &info, TRUE );
 
     jpeg_start_decompress( &info );
 
