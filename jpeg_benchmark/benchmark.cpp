@@ -25,7 +25,7 @@ void warmup(const char* filename)
 #include <jpeglib.h>
 #include <jerror.h>
 
-Surface LoadJPEG(const char* filename)
+Surface load_jpeg(const char* filename)
 {
     FILE *file = fopen(filename, "rb" );
     if ( file == NULL )
@@ -50,7 +50,7 @@ Surface LoadJPEG(const char* filename)
     unsigned long dataSize = w * h * numChannels;
 
     // read scanlines one at a time & put bytes in jdata[] array (assumes an RGB image)
-    unsigned char *data = (unsigned char *)malloc( dataSize );
+    unsigned char *data = new u8[dataSize];;
     unsigned char *rowptr[ 1 ]; // array or pointers
     for ( ; info.output_scanline < info.output_height ; )
     {
@@ -64,6 +64,49 @@ Surface LoadJPEG(const char* filename)
 
     // TODO: free data, format depends on numChannels
     return Surface(w, h, FORMAT_R8G8B8, w * numChannels, data);
+}
+
+void save_jpeg(const char* filename, const Surface& surface)
+{
+    struct jpeg_compress_struct cinfo;
+    jpeg_create_compress(&cinfo);
+
+    struct jpeg_error_mgr jerr;
+    cinfo.err = jpeg_std_error(&jerr);
+
+    FILE * outfile;
+    if ((outfile = fopen(filename, "wb")) == NULL)
+    {
+        fprintf(stderr, "can't open %s\n", filename);
+        exit(1);
+    }
+    jpeg_stdio_dest(&cinfo, outfile);
+
+    cinfo.image_width = surface.width;
+    cinfo.image_height = surface.height;
+    cinfo.input_components = 3;
+    cinfo.in_color_space = JCS_RGB;
+
+    int quality = 95;
+
+    jpeg_set_defaults(&cinfo);
+    jpeg_set_quality(&cinfo, quality, TRUE);
+    jpeg_start_compress(&cinfo, TRUE);
+
+    JSAMPROW row_pointer[1];
+
+    while (cinfo.next_scanline < cinfo.image_height)
+    {
+        row_pointer[0] = surface.image + cinfo.next_scanline * surface.stride;
+        int x = jpeg_write_scanlines(&cinfo, row_pointer, 1);
+        (void) x;
+    }
+
+    jpeg_finish_compress(&cinfo);
+    jpeg_destroy_compress(&cinfo);
+    fclose(outfile);
+
+    delete[] surface.image;
 }
 
 // ----------------------------------------------------------------------
@@ -82,18 +125,29 @@ int main(int argc, const char* argv[])
 
     Timer timer;
 
-    double time0 = timer.time();
+    uint64 time0 = timer.ms();
+    printf("load libjpeg: ");
+
+    Surface s = load_jpeg(argv[1]);
+
+    uint64 time1 = timer.ms();
+    printf("%d ms\n", int(time1 - time0));
+    printf("load mango:   ");
+
     Bitmap bitmap(argv[1]);
-    //bitmap.save("output-mango.jpg");
 
-    double time1 = timer.time();
-    Surface s = LoadJPEG(argv[1]);
-    //s.save("output-libjpeg.jpg");
-    delete[] s.image;
+    uint64 time2 = timer.ms();
+    printf("%d ms\n", int(time2 - time1));
+    printf("save libjpeg: ");
 
-    double time2 = timer.time();
+    save_jpeg("output-libjpeg.jpg", s);
 
-    printf("mango:   %f ms\n", (time1 - time0) * 1000);
-    printf("libjpeg: %f ms\n", (time2 - time1) * 1000);
-    printf("processing time: %f %%\n", (time1-time0)/(time2-time1) * 100);
+    uint64 time3 = timer.ms();
+    printf("%d ms\n", int(time3 - time2));
+    printf("save mango:   ");
+
+    bitmap.save("output-mango.jpg");
+
+    uint64 time4 = timer.ms();
+    printf("%d ms\n", int(time4 - time3));
 }
