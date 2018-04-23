@@ -1,6 +1,6 @@
 /*
     MANGO Multimedia Development Platform
-    Copyright (C) 2012-2017 Twilight Finland 3D Oy Ltd. All rights reserved.
+    Copyright (C) 2012-2018 Twilight Finland 3D Oy Ltd. All rights reserved.
 */
 #include <mango/mango.hpp>
 #include <algorithm>
@@ -151,12 +151,12 @@ namespace method3
         std::vector<float> rotations;
 
         Scene(int count)
-            : xpositions(count/4)
-            , ypositions(count/4)
-            , zpositions(count/4)
-            , xvelocities(count/4)
-            , yvelocities(count/4)
-            , zvelocities(count/4)
+            : xpositions(count / 4)
+            , ypositions(count / 4)
+            , zpositions(count / 4)
+            , xvelocities(count / 4)
+            , yvelocities(count / 4)
+            , zvelocities(count / 4)
             , colors(count)
             , radiuses(count)
             , rotations(count)
@@ -188,47 +188,54 @@ namespace method3
 } // namespace
 
 // ----------------------------------------------------------------------
-// method4: SoA with PackedVector3
+// method4: SoA with vector types
 // ----------------------------------------------------------------------
-
-/*
-    method3 implemented as float4 packets
-*/
 
 namespace method4
 {
 
-    struct PackedVector3
+    // configure SIMD vector type
+    using VectorType = float32x4;
+
+    // 3-dimensional vector of VectorType
+    using PackedVector = Vector<VectorType, 3>;
+
+    constexpr int N = VectorType::VectorSize;
+
+    VectorType vrandom()
     {
-        float4 x;
-        float4 y;
-        float4 z;
-    };
+        VectorType v;
+        for (int i = 0; i < N; ++i)
+        {
+            v[i] = dist(mt);
+        }
+        return v;
+    }
 
     struct Scene
     {
-        AlignedVector<PackedVector3> positions;
-        AlignedVector<PackedVector3> velocities;
+        AlignedVector<PackedVector> positions;
+        AlignedVector<PackedVector> velocities;
         std::vector<uint32> colors;
         std::vector<float> radiuses;
         std::vector<float> rotations;
 
         Scene(int count)
-            : positions(count/4)
-            , velocities(count/4)
+            : positions(count / N)
+            , velocities(count / N)
             , colors(count)
             , radiuses(count)
             , rotations(count)
         {
-            count /= 4;
+            count /= N;
             for (int i = 0; i < count; ++i)
             {
-                positions[i].x = random_float4(1.0f);
-                positions[i].y = random_float4(1.0f);
-                positions[i].z = random_float4(1.0f);
-                velocities[i].x = random_float4(1.0f);
-                velocities[i].y = random_float4(1.0f);
-                velocities[i].z = random_float4(1.0f);
+                positions[i].x = vrandom();
+                positions[i].y = vrandom();
+                positions[i].z = vrandom();
+                velocities[i].x = vrandom();
+                velocities[i].y = vrandom();
+                velocities[i].z = vrandom();
             }
         }
 
