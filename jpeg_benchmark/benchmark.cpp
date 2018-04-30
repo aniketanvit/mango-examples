@@ -1,6 +1,6 @@
 /*
     MANGO Multimedia Development Platform
-    Copyright (C) 2012-2016 Twilight Finland 3D Oy Ltd. All rights reserved.
+    Copyright (C) 2012-2018 Twilight Finland 3D Oy Ltd. All rights reserved.
 */
 #include <mango/mango.hpp>
 
@@ -150,4 +150,6 @@ int main(int argc, const char* argv[])
 
     uint64 time4 = timer.ms();
     printf("%d ms\n", int(time4 - time3));
+
+    printf("image: %d x %d\n", bitmap.width, bitmap.height);
 }

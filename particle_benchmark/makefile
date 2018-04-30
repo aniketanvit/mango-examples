@@ -39,7 +39,7 @@ ifeq (Linux, $(OS))
 
   LIBRARY  = $(LIBNAME)
   CLEAN    = rm -fr $(LIBRARY) $(OBJECTS_PATH)
-  LINK_POST += -lpthread -lmango -ldl
+  LINK_POST += -lmango -lpthread -ldl
 
   # Intel x86 64 bit GCC
   ifeq (x86_64, $(ARCH))
