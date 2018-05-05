@@ -1,1 +1,1 @@
-g++ -O3 -o gltest gltest.cpp -lmango -lpthread -lX11 -lGL
+g++ -O3 -o gltest gltest.cpp -lmango-opengl -lmango -lpthread -lX11 -lGL
