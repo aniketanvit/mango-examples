@@ -64,7 +64,7 @@ endif
   # ARM GCC (Tested on ODROID-U3)
   ifeq (armv7l, $(ARCH))
     CC     = gcc $(OPTIONS) $(OPTIONS_GCC) -g -marm -mcpu=cortex-a9 -mtune=cortex-a9 $(NEON) -mfloat-abi=hard -funsafe-math-optimizations -fPIC
-    CPP    = g++ $(OPTIONS) $(OPTIONS_GCC) -g -marm -mcpu=cortex-a9 -mtune=cortex-a9 $(NEON) -mfloat-abi=hard -funsafe-math-optimizations -fPIC -ansi -std=c++14
+    CPP    = g++ $(OPTIONS) $(OPTIONS_GCC) -g -marm -mcpu=cortex-a9 -mtune=cortex-a9 $(NEON) -mfloat-abi=hard -funsafe-math-optimizations -fPIC -ansi -std=c++14 -fpermissive
     LINK   = g++ -s -o $(LIBRARY)
   endif
 
